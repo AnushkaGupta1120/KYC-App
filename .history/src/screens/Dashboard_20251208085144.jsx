@@ -1,39 +1,35 @@
 import React from 'react';
-import { User, LogOut, WifiOff, FileText, ChevronRight, Clock, CheckCircle, X, Volume2, VolumeX } from 'lucide-react';
+import { User, LogOut, WifiOff, FileText, ChevronRight, Clock, CheckCircle, X } from 'lucide-react';
 
-const Dashboard = ({ t, user, status, setScreen, setStatus, resetKyc, toggleVoice, voiceEnabled, formData }) => {
+const Dashboard = ({ t, user, status, setScreen, setStatus, resetKyc, toggleVoice }) => {
   return (
     <div className="flex flex-col h-full relative">
 
-      {/* Header */}
-      <div className="bg-indigo-900 text-white pt-6 p-6 pb-10 rounded-b-[2.5rem] shadow-xl relative z-10">
-        <div className="flex justify-between items-center mb-6">
+       {/* Floating Voice Button - ALWAYS ON TOP */}
+      <button
+    onClick={toggleVoice}
+    className="absolute top-2 right-16 bg-white text-indigo-900 p-2 rounded-full shadow-xl z-[9999]"
+  >
+    🔊
+  </button>
 
+      {/* Header */}
+<div className="bg-indigo-900 text-white pt-6 p-6 pb-10 rounded-b-[2.5rem] shadow-xl relative z-10">
+
+        <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-indigo-700 rounded-full flex items-center justify-center border border-indigo-500">
               <User size={20} />
             </div>
             <div>
-              <h3 className="font-bold">{formData?.name || user?.name || "Aditya Kumar"}</h3>
+              <h3 className="font-bold">{user.name || "Aditya Kumar"}</h3>
               <p className="text-xs text-indigo-300">ID: 8839202</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Voice Button */}
-            <button
-              onClick={toggleVoice}
-              className={`p-2 rounded-full transition-colors ${voiceEnabled ? "bg-indigo-700 text-white" : "bg-indigo-800 text-indigo-400"}`}
-            >
-              {voiceEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-            </button>
-
-            {/* Logout Button */}
-            <button onClick={() => setScreen('login')}>
-              <LogOut size={20} />
-            </button>
-          </div>
-
+          <button onClick={() => setScreen('login')}>
+            <LogOut size={20} />
+          </button>
         </div>
 
         <div className="text-center">

@@ -87,8 +87,8 @@ const KYCFlow = ({ t, step, setStep, formData, setFormData, submit, onBack, onFi
       <div className="flex-1 p-6 overflow-y-auto">
 
         {/* ------------------ STEP 2 (DOCUMENT UPLOAD) ------------------ */}
-       {/* STEP 2: DOCUMENT UPLOAD */}
-{step === 2 && (
+        {/* STEP 2: DOCUMENT UPLOAD */}
+{kycStep === 2 && (
   <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
 
     {/* Hidden Inputs */}
@@ -98,7 +98,7 @@ const KYCFlow = ({ t, step, setStep, formData, setFormData, submit, onBack, onFi
       style={{ display: 'none' }}
       accept="image/*,application/pdf"
       multiple
-      onChange={(e) => handleFileChange(e, "docFront")}
+      onChange={(e) => handleFileUpload("docFront", Array.from(e.target.files))}
     />
 
     <input
@@ -107,18 +107,16 @@ const KYCFlow = ({ t, step, setStep, formData, setFormData, submit, onBack, onFi
       style={{ display: 'none' }}
       accept="image/*,application/pdf"
       multiple
-      onChange={(e) => handleFileChange(e, "docBack")}
+      onChange={(e) => handleFileUpload("docBack", Array.from(e.target.files))}
     />
 
     {/* FRONT SIDE */}
     <div
       onClick={() => document.getElementById("frontInput").click()}
-      onDrop={(e) => handleDrop(e, "docFront")}
-      onDragOver={handleDragOver}
       className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center gap-3 transition-colors 
-      ${frontFileInfo ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-white hover:border-indigo-400'}`}
+      ${formData.docFront ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-white hover:border-indigo-400'}`}
     >
-      {frontFileInfo ? (
+      {formData.docFront ? (
         <>
           <CheckCircle className="text-green-600" size={32} />
           <span className="text-sm font-bold text-green-700">Uploaded Successfully</span>
@@ -137,12 +135,10 @@ const KYCFlow = ({ t, step, setStep, formData, setFormData, submit, onBack, onFi
     {/* BACK SIDE */}
     <div
       onClick={() => document.getElementById("backInput").click()}
-      onDrop={(e) => handleDrop(e, "docBack")}
-      onDragOver={handleDragOver}
       className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center gap-3 transition-colors 
-      ${backFileInfo ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-white hover:border-indigo-400'}`}
+      ${formData.docBack ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-white hover:border-indigo-400'}`}
     >
-      {backFileInfo ? (
+      {formData.docBack ? (
         <>
           <CheckCircle className="text-green-600" size={32} />
           <span className="text-sm font-bold text-green-700">Uploaded Successfully</span>

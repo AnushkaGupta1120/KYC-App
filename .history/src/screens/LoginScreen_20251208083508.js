@@ -6,21 +6,6 @@ import React, { useEffect } from 'react';
 const LoginScreen = ({ t, onLogin, onLangChange, currentLang }) => {
   // Safety check for t
   if (!t) return <div className="p-8 text-center text-red-500">Loading Localization...</div>;
-  
-  useEffect(() => {
-  const speak = () => {
-    const msg = new SpeechSynthesisUtterance(t.voice_intro);
-    msg.lang = currentLang === 'hi' ? 'hi-IN' : 'en-IN';
-    window.speechSynthesis.speak(msg);
-  };
-
-  // Browser autoplay fix
-  if (window.speechSynthesis.getVoices().length === 0) {
-    window.speechSynthesis.onvoiceschanged = speak;
-  } else {
-    speak();
-  }
-}, [currentLang]);
 
   return (
     <div className="p-8 flex flex-col h-full justify-center bg-indigo-50">

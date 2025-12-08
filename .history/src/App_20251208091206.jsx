@@ -179,10 +179,8 @@ export default function App() {
 
     {/* Header */}
     <div className="bg-indigo-900 text-white pt-6 p-6 pb-10 rounded-b-[2.5rem] shadow-xl relative z-10">
-
       <div className="flex justify-between items-center mb-6">
 
-        {/* User Info */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-indigo-700 rounded-full flex items-center justify-center border border-indigo-500">
             <User size={20} />
@@ -193,14 +191,16 @@ export default function App() {
           </div>
         </div>
 
-        {/* Voice & Logout */}
         <div className="flex items-center gap-3">
+          {/* Voice Button */}
           <button
             onClick={() => setVoiceEnabled(!voiceEnabled)}
             className={`p-2 rounded-full transition-colors ${voiceEnabled ? "bg-indigo-700 text-white" : "bg-indigo-800 text-indigo-400"}`}
           >
             {voiceEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
           </button>
+
+          {/* Logout Button */}
           <button onClick={() => setCurrentScreen('login')}>
             <LogOut size={20} />
           </button>
@@ -208,7 +208,8 @@ export default function App() {
 
       </div>
 
-      {/* KYC Status (INSIDE HEADER — correct position) */}
+      </div>
+
       <div className="text-center">
         <p className="text-indigo-300 text-sm mb-1">{t.status_label}</p>
         <div className="flex items-center justify-center gap-2">
@@ -218,13 +219,12 @@ export default function App() {
           {kycStatus === 'rejected' && <span className="text-2xl font-bold text-red-400">{t.rejected}</span>}
         </div>
       </div>
-
-    </div> {/* END HEADER */}
+    </div>
 
     {/* Body */}
     <div className="flex-1 bg-gray-50 -mt-8 pt-12 px-6 overflow-y-auto">
-
-      {/* Offline banner */}
+      
+      {/* Offline Indicator */}
       <div className="flex justify-center mb-4">
         <div className="bg-gray-200 px-3 py-1 rounded-full flex items-center gap-2 text-[10px] text-gray-600 font-bold">
           <WifiOff size={12} /> {t.offline_mode}
@@ -252,9 +252,7 @@ export default function App() {
       {kycStatus === 'submitted' && (
         <div className="bg-white p-6 rounded-2xl shadow-md border-l-4 border-yellow-400">
           <div className="flex items-start gap-4">
-            <div className="bg-yellow-100 p-3 rounded-full text-yellow-600">
-              <Clock size={24} />
-            </div>
+            <div className="bg-yellow-100 p-3 rounded-full text-yellow-600"><Clock size={24} /></div>
             <div>
               <h3 className="font-bold text-gray-800">{t.under_review}</h3>
               <p className="text-gray-500 text-sm mt-1">{t.review_desc}</p>
@@ -275,7 +273,7 @@ export default function App() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            {['Transfer','Statements','Cards','Loans'].map((item,i)=>(
+            {['Transfer', 'Statements', 'Cards', 'Loans'].map((item, i) => (
               <div key={i} className="bg-white p-4 rounded-xl shadow-sm flex flex-col items-center justify-center gap-2 aspect-square">
                 <div className="w-10 h-10 bg-gray-100 rounded-full"></div>
                 <span className="font-bold text-gray-600 text-sm">{item}</span>
@@ -291,7 +289,6 @@ export default function App() {
           <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 text-red-600"><X size={24} /></div>
           <h3 className="font-bold text-red-800">{t.rejected}</h3>
           <p className="text-red-600 text-sm mb-4">{t.rejected_msg}</p>
-
           <button
             onClick={() => { setKycStatus('none'); setKycStep(1); }}
             className="text-red-700 font-bold text-sm underline"
@@ -301,11 +298,9 @@ export default function App() {
         </div>
       )}
 
-    </div> {/* END BODY */}
-
+    </div>
   </div>
 )}
-
 
         {/* --- KYC FLOW WIZARD --- */}
         {currentScreen === 'kyc_flow' && (

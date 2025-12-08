@@ -9,12 +9,12 @@ const AdminPanel = ({ t, status, formData, setStatus, setScreen }) => {
 
   return (
     <div className="flex flex-col h-full bg-gray-100">
-
-      {/* FIXED HEADER */}
+      
+      {/* HEADER FIXED */}
       <div className="bg-gray-800 text-white p-4 flex items-center justify-between shadow-lg">
 
         {/* BACK BUTTON */}
-        <button 
+        <button
           onClick={() => setScreen('login')}
           className="flex items-center gap-2 text-xs bg-gray-700 px-3 py-2 rounded-lg hover:bg-gray-600"
         >
@@ -27,15 +27,13 @@ const AdminPanel = ({ t, status, formData, setStatus, setScreen }) => {
         </h2>
 
         {/* LOGOUT BUTTON */}
-        <button 
+        <button
           onClick={() => setScreen('login')}
           className="bg-gray-700 p-2 rounded-lg text-xs hover:bg-gray-600"
         >
           {t.admin_logout}
         </button>
-
       </div>
-      
 
       {/* BODY */}
       <div className="p-4 flex-1 overflow-y-auto">
@@ -45,10 +43,13 @@ const AdminPanel = ({ t, status, formData, setStatus, setScreen }) => {
 
         {status === 'submitted' ? (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-
+            
+            {/* Submission Details */}
             <div className="p-4 border-b border-gray-100 flex justify-between items-start">
               <div>
-                <h4 className="font-bold text-gray-800">{formData.name || "Aditya Kumar"}</h4>
+                <h4 className="font-bold text-gray-800">
+                  {formData.name || "Aditya Kumar"}
+                </h4>
                 <p className="text-xs text-gray-500">{t.submitted_just_now}</p>
               </div>
               <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-[10px] font-bold">
@@ -56,27 +57,34 @@ const AdminPanel = ({ t, status, formData, setStatus, setScreen }) => {
               </span>
             </div>
 
+            {/* Images */}
             <div className="p-4 grid grid-cols-2 gap-2">
-              <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center text-xs text-gray-400">ID Front</div>
-              <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center text-xs text-gray-400">ID Back</div>
-              <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center text-xs text-gray-400 col-span-2">Selfie</div>
+              <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center text-xs text-gray-400">
+                ID Front
+              </div>
+              <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center text-xs text-gray-400">
+                ID Back
+              </div>
+              <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center text-xs text-gray-400 col-span-2">
+                Selfie
+              </div>
             </div>
 
+            {/* ACTION BUTTONS */}
             <div className="p-4 bg-gray-50 flex gap-3">
-              <button 
+              <button
                 onClick={() => adminAction('rejected')}
                 className="flex-1 py-2 bg-white border border-red-200 text-red-600 rounded-lg font-bold shadow-sm hover:bg-red-50"
               >
                 {t.reject}
               </button>
-              <button 
+              <button
                 onClick={() => adminAction('approved')}
                 className="flex-1 py-2 bg-green-600 text-white rounded-lg font-bold shadow-sm hover:bg-green-700"
               >
                 {t.approve}
               </button>
             </div>
-
           </div>
         ) : (
           <div className="text-center py-20 text-gray-400">
@@ -84,8 +92,8 @@ const AdminPanel = ({ t, status, formData, setStatus, setScreen }) => {
             <p>{t.no_pending}</p>
           </div>
         )}
-      </div>
 
+      </div>
     </div>
   );
 };

@@ -104,12 +104,12 @@ const AdminPanel = ({ t, status, formData, setStatus, setScreen }) => {
            <div className="p-4 grid grid-cols-2 gap-3">
 
   {/* ID FRONT */}
-  <div className="bg-gray-100 rounded-lg h-60 flex items-center justify-center overflow-hidden p-2">
+  <div className="bg-gray-100 rounded-lg h-40 flex items-center justify-center overflow-hidden p-2">
     {renderPreview(formData.docFront)}
   </div>
 
   {/* ID BACK */}
-  <div className="bg-gray-100 rounded-lg h-60 flex items-center justify-center overflow-hidden p-2">
+  <div className="bg-gray-100 rounded-lg h-40 flex items-center justify-center overflow-hidden p-2">
     {renderPreview(formData.docBack)}
   </div>
 

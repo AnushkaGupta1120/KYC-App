@@ -101,24 +101,22 @@ const AdminPanel = ({ t, status, formData, setStatus, setScreen }) => {
             </div>
 
             {/* FILE PREVIEWS */}
-           <div className="p-4 grid grid-cols-2 gap-3">
+            <div className="p-4 grid grid-cols-2 gap-3">
+              {/* ID Front */}
+              <div className="bg-gray-100 rounded-lg h-28 flex items-center justify-center overflow-hidden p-2">
+                {renderPreview(formData.docFront)}
+              </div>
 
-  {/* ID FRONT */}
-  <div className="bg-gray-100 rounded-lg h-60 flex items-center justify-center overflow-hidden p-2">
-    {renderPreview(formData.docFront)}
-  </div>
+              {/* ID Back */}
+              <div className="bg-gray-100 rounded-lg h-28 flex items-center justify-center overflow-hidden p-2">
+                {renderPreview(formData.docBack)}
+              </div>
 
-  {/* ID BACK */}
-  <div className="bg-gray-100 rounded-lg h-60 flex items-center justify-center overflow-hidden p-2">
-    {renderPreview(formData.docBack)}
-  </div>
-
-  {/* SELFIE */}
-  <div className="bg-gray-100 rounded-lg col-span-2 h-56 flex items-center justify-center overflow-hidden p-2">
-    {renderSelfie()}
-  </div>
-
-</div>
+              {/* Selfie */}
+              <div className="bg-gray-100 rounded-lg col-span-2 h-40 flex items-center justify-center overflow-hidden p-2">
+                {renderSelfie()}
+              </div>
+            </div>
 
             {/* ACTION BUTTONS */}
             <div className="p-4 bg-gray-50 flex gap-3">

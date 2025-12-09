@@ -19,7 +19,7 @@ import {
 
 import LOCALIZATION from "./data/localization";
 import CameraView from "./components/CameraView";
-import KYCFlow from "./screens/KYCFlow";
+import KYCFlow from "./KYCFlow";
 
 export default function App() {
   // SCREEN STATE

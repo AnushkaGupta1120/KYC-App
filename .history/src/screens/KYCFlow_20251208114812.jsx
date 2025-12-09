@@ -1,8 +1,7 @@
-import Step1Personal from "../components/steps/Step1Personal";
-import Step2Documents from "../components/steps/Step2Documents";
-import Step3Selfie from "../components/steps/Step3Selfie";
-import Step4Review from "../components/steps/Step4Review";
-
+import Step1Personal from "./components/steps/Step1Personal";
+import Step2Documents from "./components/steps/Step2Documents";
+import Step3Selfie from "./components/steps/Step3Selfie";
+import Step4Review from "./components/steps/Step4Review";
 
 export default function KYCFlow({ t, kycStep, setKycStep, formData, setFormData, handleFileUpload, submitKYC }) {
   return (

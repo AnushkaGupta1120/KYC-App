@@ -1,31 +1,28 @@
 const AdminPanel = ({ t, kycStatus, formData, adminAction, setCurrentScreen }) => {
 
-  console.log("AdminPanel mounted with status:", kycStatus);
-
   const renderPreview = (fileObj) => {
     if (!fileObj || !fileObj.files || fileObj.files.length === 0)
       return <span className="text-gray-400 text-xs">No file</span>;
 
     const file = fileObj.files[0];
-
     return (
       <img
         src={file.preview}
         className="w-full h-full object-cover rounded-lg"
-        alt="uploaded"
+        alt="ID"
       />
     );
   };
 
   const renderSelfie = () => {
-    if (!formData || !formData.selfie)
+    if (!formData.selfie) 
       return <span className="text-gray-400 text-xs">Selfie not captured</span>;
 
     return (
       <img
         src={formData.selfie}
         className="w-full h-full object-cover rounded-lg"
-        alt="selfie"
+        alt="Selfie"
       />
     );
   };
@@ -59,43 +56,34 @@ const AdminPanel = ({ t, kycStatus, formData, adminAction, setCurrentScreen }) =
           <div className="bg-white rounded-xl shadow">
 
             <div className="p-4 border-b">
-              <h4 className="font-bold">{formData?.name || "User"}</h4>
+              <h4 className="font-bold">{formData.name}</h4>
               <p className="text-xs text-gray-500">{t.submitted_just_now}</p>
             </div>
 
             <div className="p-4 grid grid-cols-2 gap-2">
-              <div className="h-24 bg-gray-100 rounded-lg">
-                {renderPreview(formData?.docFront)}
-              </div>
-              <div className="h-24 bg-gray-100 rounded-lg">
-                {renderPreview(formData?.docBack)}
-              </div>
-              <div className="h-24 col-span-2 bg-gray-100 rounded-lg">
-                {renderSelfie()}
-              </div>
+              <div className="h-24 bg-gray-100 rounded-lg">{renderPreview(formData.docFront)}</div>
+              <div className="h-24 bg-gray-100 rounded-lg">{renderPreview(formData.docBack)}</div>
+              <div className="h-24 col-span-2 bg-gray-100 rounded-lg">{renderSelfie()}</div>
             </div>
 
             <div className="p-4 flex gap-3">
-              <button
+              <button 
                 onClick={() => adminAction("rejected")}
-                className="flex-1 bg-red-100 text-red-600 p-2 rounded-lg"
-              >
+                className="flex-1 bg-red-100 text-red-600 p-2 rounded-lg">
                 {t.reject}
               </button>
 
-              <button
+              <button 
                 onClick={() => adminAction("approved")}
-                className="flex-1 bg-green-600 text-white p-2 rounded-lg"
-              >
+                className="flex-1 bg-green-600 text-white p-2 rounded-lg">
                 {t.approve}
               </button>
             </div>
+
           </div>
 
         ) : (
-          <div className="text-center text-gray-400 py-20">
-            {t.no_pending}
-          </div>
+          <div className="text-center text-gray-400 py-20">{t.no_pending}</div>
         )}
 
       </div>
@@ -103,5 +91,3 @@ const AdminPanel = ({ t, kycStatus, formData, adminAction, setCurrentScreen }) =
     </div>
   );
 };
-
-export default AdminPanel;

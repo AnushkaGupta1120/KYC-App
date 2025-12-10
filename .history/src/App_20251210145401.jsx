@@ -233,12 +233,13 @@ export default function App() {
 {currentScreen === "admin" && (
   <AdminPanel
     t={t}
-    kycStatus={kycStatus}
+    status={kycStatus}
     formData={formData}
-    adminAction={adminAction}
-    setCurrentScreen={setCurrentScreen}
+    setStatus={setKycStatus}
+    setScreen={setCurrentScreen}
   />
 )}
+
 
 
         {/* DASHBOARD */}

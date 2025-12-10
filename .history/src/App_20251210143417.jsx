@@ -227,19 +227,6 @@ export default function App() {
         {currentScreen === "otp_verify" && (
           <OTPVerify setCurrentScreen={setCurrentScreen} />
         )}
-      
-
-        {/* ADMIN PANEL */}
-{currentScreen === "admin" && (
-  <AdminPanel
-    t={t}
-    kycStatus={kycStatus}
-    formData={formData}
-    adminAction={adminAction}
-    setCurrentScreen={setCurrentScreen}
-  />
-)}
-
 
         {/* DASHBOARD */}
         {currentScreen === "dashboard" && (

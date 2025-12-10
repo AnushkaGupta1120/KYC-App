@@ -2,6 +2,7 @@ export const LOCALIZATION = {
   en: {
     app_name: "KYC Verify",
     back: "Back",
+    back: "वापस",
     welcome: "Welcome",
     kyc_pending: "KYC Pending",
     start_kyc: "Start Verification",
@@ -58,7 +59,6 @@ export const LOCALIZATION = {
   },
   hi: {
     app_name: "केवाईसी सत्यापित",
-    back: "वापस",
     welcome: "स्वागत है",
     kyc_pending: "केवाईसी लंबित",
     start_kyc: "सत्यापन शुरू करें",

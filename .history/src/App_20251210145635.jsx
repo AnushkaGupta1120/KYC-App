@@ -231,14 +231,18 @@ export default function App() {
 
         {/* ADMIN PANEL */}
 {currentScreen === "admin" && (
-  <AdminPanel
-    t={t}
-    kycStatus={kycStatus}
-    formData={formData}
-    adminAction={adminAction}
-    setCurrentScreen={setCurrentScreen}
-  />
+  <>
+    {console.log("Admin screen is rendering")}
+    <AdminPanel
+      t={t}
+      kycStatus={kycStatus}
+      formData={formData}
+      adminAction={adminAction}
+      setCurrentScreen={setCurrentScreen}
+    />
+  </>
 )}
+
 
 
         {/* DASHBOARD */}

@@ -4,40 +4,40 @@ export default function RegisterUser({ setCurrentScreen }) {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
-const handleRegister = () => {
-  if (!name || !mobile || !password) {
-    alert("Please fill all fields.");
-    return;
-  }
 
-  const mobileRegex = /^[0-9]{10}$/;
-  if (!mobileRegex.test(mobile)) {
-    alert("Mobile number must be exactly 10 digits.");
-    return;
-  }
+  const handleRegister = () => {
+    if (!name || !mobile || !password) {
+      alert("Please fill all fields.");
+      return;
+    }
 
-  if (password.length < 8) {
-    alert("Password must be at least 8 characters long.");
-    return;
-  }
+    // Validate mobile number
+    const mobileRegex = /^[0-9]{10}$/;
+    if (!mobileRegex.test(mobile)) {
+      alert("Mobile number must be exactly 10 digits.");
+      return;
+    }
 
-  const userData = { name, mobile, password };
+    // Validate password length
+    if (password.length < 8) {
+      alert("Password must be at least 8 characters long.");
+      return;
+    }
 
-  // Save user account
-  localStorage.setItem("user_account", JSON.stringify(userData));
+    const userData = {
+      name,
+      mobile,
+      password,
+    };
 
-  // Generate OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Save user to localStorage
+    localStorage.setItem("user_account", JSON.stringify(userData));
 
-  // Save OTP
-  localStorage.setItem("user_otp", otp);
+    alert("Registered successfully!");
 
-  alert("Your OTP is: " + otp);
-
-  // Redirect to OTP screen
-  setCurrentScreen("otp_verify");
-};
-
+    // Go to login
+    setCurrentScreen("user_login");
+  };
 
   return (
     <div className="p-6">

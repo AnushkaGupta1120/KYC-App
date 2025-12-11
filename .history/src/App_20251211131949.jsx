@@ -92,7 +92,6 @@ export default function App() {
   // ---------- Global state ----------
   const [currentScreen, setCurrentScreen] = useState("splash"); // splash, login, user_login, register, otp_verify, dashboard, kyc_flow, admin
   const [userRole, setUserRole] = useState("user"); // user | admin
-  const [userId, setUserId] = useState(null);
   const [kycStatus, setKycStatus] = useState("none"); // none | submitted | approved | rejected
   const [kycStep, setKycStep] = useState(1); // 1..4
   const [isInitialized, setIsInitialized] = useState(false);
@@ -160,28 +159,11 @@ export default function App() {
     });
 
   // ---------- Handlers ----------
-  const handleLogin = () => {
-  const saved = JSON.parse(localStorage.getItem("user_account"));
-
-  if (!saved) {
-    alert("No user found. Please register.");
-    return;
-  }
-
-  if (mobile !== saved.mobile || password !== saved.password) {
-    alert("Invalid mobile or password");
-    return;
-  }
-
-  // Generate OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  localStorage.setItem("user_otp", otp);
-
-  alert("Your OTP is: " + otp);
-
-  // Move to OTP screen
-  setCurrentScreen("otp_verify");
-};
+  const handleLogin = (role) => {
+    if (role === "register") return setCurrentScreen("register");
+    if (role === "user") return setCurrentScreen("user_login");
+    if (role === "admin") return setCurrentScreen("admin");
+  };
 
   // file upload handler
   const handleFileUpload = async (field, files) => {
@@ -385,15 +367,8 @@ export default function App() {
 
         {/* ADMIN PANEL */}
         {currentScreen === "admin" && (
-  <AdminPanel
-    t={t}
-    status={kycStatus}
-    formData={formData}
-    adminAction={adminAction}
-    setCurrentScreen={setCurrentScreen}
-  />
-)}
-
+          <AdminPanel t={t} status={kycStatus} formData={formData} adminAction={adminAction} setCurrentScreen={setCurrentScreen} />
+        )}
 
         {/* DASHBOARD */}
         {currentScreen === "dashboard" && (

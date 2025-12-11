@@ -1,6 +1,5 @@
 // src/App.jsx
-import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
-
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   Shield,
   User,
@@ -24,17 +23,17 @@ import KYCFlow from "./screens/KYCFlow.jsx";
 
 import LOCALIZATION from "./data/localization";
 
-// ---------- Optimized useVoice hook ----------
+// ---------- small voice hook ----------
 function useVoice(initialLang = "en", initialEnabled = true) {
   const [lang, setLang] = useState(initialLang);
   const [enabled, setEnabled] = useState(initialEnabled);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  // throttle control
-  const THROTTLE_DELAY = 700; // ms
-  const lastSpeakRef = useRef(0);
+  // Prevent rapid-fire TTS calls
+  const THROTTLE_DELAY = 700; // milliseconds
+  const lastSpeakRef = React.useRef(0);
 
-  // Cancel active speech
+  // Cancel any ongoing speech
   const cancelSpeech = useCallback(() => {
     try {
       if (window?.speechSynthesis) {
@@ -45,24 +44,32 @@ function useVoice(initialLang = "en", initialEnabled = true) {
     }
   }, []);
 
-  // Main speak function
   const speak = useCallback(
     (text, opts = {}) => {
       if (!enabled || !text) return;
-      if (!window?.speechSynthesis || typeof window.SpeechSynthesisUtterance === "undefined") return;
+      if (!window?.speechSynthesis || typeof SpeechSynthesisUtterance === "undefined") return;
 
       const now = Date.now();
-      if (now - lastSpeakRef.current < THROTTLE_DELAY) return;
+
+      // THROTTLE: Skip if a speech occurred within last 700ms
+      if (now - lastSpeakRef.current < THROTTLE_DELAY) {
+        return;
+      }
       lastSpeakRef.current = now;
 
-      // Cancel previous speech to avoid overlap
+      // Cancel any current speaking
       cancelSpeech();
 
       const utter = new SpeechSynthesisUtterance(text);
+
+      // Language
       utter.lang = lang === "hi" ? "hi-IN" : "en-IN";
+
+      // Optional rate/pitch overrides
       utter.rate = opts.rate ?? 0.95;
       utter.pitch = opts.pitch ?? 1;
 
+      // Event Handlers
       utter.onstart = () => setIsSpeaking(true);
       utter.onend = () => setIsSpeaking(false);
       utter.onerror = () => setIsSpeaking(false);
@@ -70,7 +77,7 @@ function useVoice(initialLang = "en", initialEnabled = true) {
       try {
         window.speechSynthesis.speak(utter);
       } catch (err) {
-        console.error("TTS speak error:", err);
+        console.error("TTS error:", err);
       }
     },
     [enabled, lang, cancelSpeech]
@@ -87,17 +94,58 @@ function useVoice(initialLang = "en", initialEnabled = true) {
   };
 }
 
-// ---------- App component ----------
+
+  const speak = useCallback(
+    (text, opts = {}) => {
+      if (!enabled || !text) return;
+      if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+        // browser doesn't support TTS
+        return;
+      }
+
+      // cancel existing speech to avoid overlap
+      cancelSpeech();
+
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = lang === "hi" ? "hi-IN" : "en-IN";
+      // allow override rate/pitch via opts but keep defaults sensible
+      utter.rate = opts.rate ?? 0.95;
+      utter.pitch = opts.pitch ?? 1;
+
+      setIsSpeaking(true);
+      utter.onend = () => setIsSpeaking(false);
+      utter.onerror = () => setIsSpeaking(false);
+
+      try {
+        window.speechSynthesis.speak(utter);
+      } catch (e) {
+        // some browsers throw if speechSynthesis is busy; swallow errors
+        console.error("TTS failed", e);
+      }
+    },
+    [enabled, lang, cancelSpeech]
+  );
+
+  return {
+    lang,
+    setLang,
+    enabled,
+    setEnabled,
+    isSpeaking,
+    speak,
+    cancelSpeech,
+  };
+
+
 export default function App() {
   // ---------- Global state ----------
   const [currentScreen, setCurrentScreen] = useState("splash"); // splash, login, user_login, register, otp_verify, dashboard, kyc_flow, admin
   const [userRole, setUserRole] = useState("user"); // user | admin
-  const [userId, setUserId] = useState(null);
   const [kycStatus, setKycStatus] = useState("none"); // none | submitted | approved | rejected
   const [kycStep, setKycStep] = useState(1); // 1..4
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // form data
+  // form data (centralized)
   const [formData, setFormData] = useState({
     name: "",
     dob: "",
@@ -105,7 +153,7 @@ export default function App() {
     idNumber: "",
     docFront: null,
     docBack: null,
-    selfie: null,
+    selfie: null, // base64 string or object
   });
 
   // voice hook
@@ -132,10 +180,10 @@ export default function App() {
     }
     if (savedLang) setLang(savedLang);
 
-    // splash -> login
+    // show splash then go to login
     const timer = setTimeout(() => {
       setCurrentScreen("login");
-      setIsInitialized(true);
+      setIsInitialized(true); // Mark as initialized after splash
     }, 1200);
     return () => clearTimeout(timer);
   }, [setLang]);
@@ -145,7 +193,7 @@ export default function App() {
     try {
       localStorage.setItem("kyc_formData", JSON.stringify(formData));
     } catch (e) {
-      // ignore
+      // handle circular or large data issues silently
     }
     localStorage.setItem("kyc_lang", lang);
   }, [kycStatus, formData, lang]);
@@ -160,30 +208,13 @@ export default function App() {
     });
 
   // ---------- Handlers ----------
-  const handleLogin = () => {
-  const saved = JSON.parse(localStorage.getItem("user_account"));
+  const handleLogin = (role) => {
+    if (role === "register") return setCurrentScreen("register");
+    if (role === "user") return setCurrentScreen("user_login");
+    if (role === "admin") return setCurrentScreen("admin");
+  };
 
-  if (!saved) {
-    alert("No user found. Please register.");
-    return;
-  }
-
-  if (mobile !== saved.mobile || password !== saved.password) {
-    alert("Invalid mobile or password");
-    return;
-  }
-
-  // Generate OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  localStorage.setItem("user_otp", otp);
-
-  alert("Your OTP is: " + otp);
-
-  // Move to OTP screen
-  setCurrentScreen("otp_verify");
-};
-
-  // file upload handler
+  // file upload handler with previews + voice announcement
   const handleFileUpload = async (field, files) => {
     try {
       const fileArr = Array.isArray(files) ? files : [files];
@@ -207,6 +238,7 @@ export default function App() {
         },
       }));
 
+      // announce file upload using localization messages
       const msg = field === "docFront" ? t.voice_doc_front : t.voice_doc_back;
       speak(msg);
     } catch (err) {
@@ -214,8 +246,9 @@ export default function App() {
     }
   };
 
-  // handle selfie captured
+  // handle selfie captured (some Step3Selfie component should call this)
   const handleSelfieCapture = async (fileOrBase64) => {
+    // accept either File or base64 string
     let selfieValue = fileOrBase64;
     if (fileOrBase64 instanceof File) {
       selfieValue = await toBase64(fileOrBase64);
@@ -242,15 +275,20 @@ export default function App() {
 
   // admin decision
   const adminAction = (action) => {
+    // action should be 'approved' or 'rejected'
     setKycStatus(action);
     if (action === "approved") speak(t.voice_dashboard_approved);
     else speak(t.voice_dashboard_rejected);
+    // optional: further persistence or notifications
   };
 
-  // language change
+  // language change (central)
   const changeLang = (L) => {
     setLang(L);
+    // persist immediately so subsequent speak uses new language
     localStorage.setItem("kyc_lang", L);
+    // speak a short confirmation in the selected language
+    // small delay to ensure language has been set for the speak call
     setTimeout(() => speak(LOCALIZATION[L].voice_lang_changed), 50);
   };
 
@@ -258,9 +296,12 @@ export default function App() {
   const toggleVoiceEnabled = () => {
     setVoiceEnabled((v) => {
       const newVal = !v;
+      // announce state if enabling
       if (newVal) {
-        setTimeout(() => speak(t.voice_lang_changed || (lang === "hi" ? "भाषा सक्रिय हुई" : "Voice enabled")), 50);
+        // speak in current language
+        setTimeout(() => speak(t.voice_lang_changed || (lang === "hi" ? "भाषा सक्षम की गई" : "Voice enabled")), 50);
       } else {
+        // cancel ongoing speech immediately
         cancelSpeech();
       }
       return newVal;
@@ -268,23 +309,36 @@ export default function App() {
   };
 
   // ---------- Screen / Step voice prompts ----------
+  // Speak when entering login screen
   useEffect(() => {
     if (!isInitialized) return;
-    if (currentScreen === "login") speak(t.voice_login);
+    if (currentScreen === "login") {
+      speak(t.voice_login);
+    }
   }, [currentScreen, isInitialized, lang, speak, t]);
 
+  // user login screen
   useEffect(() => {
-    if (currentScreen === "user_login") speak(t.voice_user_login);
+    if (currentScreen === "user_login") {
+      speak(t.voice_user_login);
+    }
   }, [currentScreen, lang, speak, t]);
 
+  // register screen
   useEffect(() => {
-    if (currentScreen === "register") speak(t.voice_register);
+    if (currentScreen === "register") {
+      speak(t.voice_register);
+    }
   }, [currentScreen, lang, speak, t]);
 
+  // otp screen
   useEffect(() => {
-    if (currentScreen === "otp_verify") speak(t.voice_otp);
+    if (currentScreen === "otp_verify") {
+      speak(t.voice_otp);
+    }
   }, [currentScreen, lang, speak, t]);
 
+  // dashboard announcements based on status
   useEffect(() => {
     if (currentScreen === "dashboard") {
       if (kycStatus === "none") speak(t.voice_dashboard_start);
@@ -294,8 +348,10 @@ export default function App() {
     }
   }, [currentScreen, kycStatus, lang, speak, t]);
 
+  // KYC step guidance (when entering kyc_flow or when step changes)
   useEffect(() => {
     if (currentScreen !== "kyc_flow") return;
+    // speak the instruction for the current step
     if (kycStep === 1) speak(t.voice_step1);
     else if (kycStep === 2) speak(t.voice_step2);
     else if (kycStep === 3) speak(t.voice_step3);
@@ -372,28 +428,25 @@ export default function App() {
         )}
 
         {/* USER LOGIN / REGISTER / OTP */}
-       {currentScreen === "user_login" && (
-  <UserLogin
-    setCurrentScreen={setCurrentScreen}
-    setUserRole={setUserRole}
-    setUserId={setUserId}   // <-- THIS MUST BE PRESENT
-  />
-)}
-
+        {currentScreen === "user_login" && (
+          <UserLogin
+            setCurrentScreen={setCurrentScreen}
+            setUserRole={setUserRole}
+          />
+        )}
         {currentScreen === "register" && <RegisterUser setCurrentScreen={setCurrentScreen} />}
         {currentScreen === "otp_verify" && <OTPVerify setCurrentScreen={setCurrentScreen} />}
 
         {/* ADMIN PANEL */}
         {currentScreen === "admin" && (
-  <AdminPanel
-    t={t}
-    status={kycStatus}
-    formData={formData}
-    adminAction={adminAction}
-    setCurrentScreen={setCurrentScreen}
-  />
-)}
-
+          <AdminPanel
+            t={t}
+            status={kycStatus}
+            formData={formData}
+            adminAction={adminAction}
+            setCurrentScreen={setCurrentScreen}
+          />
+        )}
 
         {/* DASHBOARD */}
         {currentScreen === "dashboard" && (
@@ -506,7 +559,7 @@ export default function App() {
           </div>
         )}
 
-        {/* KYC FLOW */}
+        {/* KYC FLOW (pass speak and selfie handler) */}
         {currentScreen === "kyc_flow" && (
           <KYCFlow
             t={t}

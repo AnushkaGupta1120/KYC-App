@@ -4,40 +4,27 @@ export default function RegisterUser({ setCurrentScreen }) {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
-const handleRegister = () => {
-  if (!name || !mobile || !password) {
-    alert("Please fill all fields.");
-    return;
-  }
 
-  const mobileRegex = /^[0-9]{10}$/;
-  if (!mobileRegex.test(mobile)) {
-    alert("Mobile number must be exactly 10 digits.");
-    return;
-  }
+  const handleRegister = () => {
+    if (!name || !mobile || !password) {
+      alert("Please fill all fields.");
+      return;
+    }
 
-  if (password.length < 8) {
-    alert("Password must be at least 8 characters long.");
-    return;
-  }
+    const userData = {
+      name,
+      mobile,
+      password,
+    };
 
-  const userData = { name, mobile, password };
+    // Save user to localStorage
+    localStorage.setItem("user_account", JSON.stringify(userData));
 
-  // Save user account
-  localStorage.setItem("user_account", JSON.stringify(userData));
+    alert("Registered successfully!");
 
-  // Generate OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-  // Save OTP
-  localStorage.setItem("user_otp", otp);
-
-  alert("Your OTP is: " + otp);
-
-  // Redirect to OTP screen
-  setCurrentScreen("otp_verify");
-};
-
+    // Go to login
+    setCurrentScreen("user_login");
+  };
 
   return (
     <div className="p-6">
@@ -56,14 +43,13 @@ const handleRegister = () => {
         type="text"
         placeholder="Mobile Number"
         value={mobile}
-        onChange={(e) => setMobile(e.target.value.replace(/\D/g, ""))} // only digits
-        maxLength={10}
+        onChange={(e) => setMobile(e.target.value)}
       />
 
       <input
         className="w-full border p-3 rounded mb-3"
         type="password"
-        placeholder="Create Password (min 8 characters)"
+        placeholder="Create Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />

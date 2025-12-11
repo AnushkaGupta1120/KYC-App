@@ -2,29 +2,23 @@ import React, { useState } from "react";
 
 export default function UserLogin({ setCurrentScreen, setUserRole, setUserId }) {
   const [mobile, setMobile] = useState("");
-  const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    const saved = JSON.parse(localStorage.getItem("user_account"));
-
-    if (!saved) {
-      alert("No account found. Please register.");
+    if (!mobile || mobile.length < 10) {
+      alert("Please enter a valid mobile number");
       return;
     }
 
-    if (saved.mobile !== mobile || saved.password !== password) {
-      alert("Invalid mobile or password.");
-      return;
-    }
-
-    // Login success
+    // ⭐ Save login persistently
     localStorage.setItem("is_logged_in", "true");
     localStorage.setItem("user_id", mobile);
 
-    setUserRole("user");
+    // ⭐ Store user ID in React state
     setUserId(mobile);
+    setUserRole("user");
 
-    setCurrentScreen("dashboard");
+    // Continue to OTP or dashboard (depending on your design)
+    setCurrentScreen("otp_verify");
   };
 
   return (
@@ -33,18 +27,10 @@ export default function UserLogin({ setCurrentScreen, setUserRole, setUserId }) 
 
       <input
         type="text"
-        placeholder="Mobile Number"
+        placeholder="Enter Mobile Number"
         value={mobile}
         onChange={(e) => setMobile(e.target.value)}
-        className="w-full border p-3 rounded mb-3"
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full border p-3 rounded mb-3"
+        className="w-full border p-3 rounded mb-4"
       />
 
       <button

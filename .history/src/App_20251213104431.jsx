@@ -97,7 +97,7 @@ export default function App() {
   const [kycStatus, setKycStatus] = useState("none"); // none | submitted | approved | rejected
   const [kycStep, setKycStep] = useState(1); // 1..4
   const [isInitialized, setIsInitialized] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
+    const [rejectionReason, setRejectionReason] = useState("");
 
 
   // form data
@@ -244,15 +244,14 @@ if (savedReason) setRejectionReason(savedReason);
   if (action === "rejected") {
     setRejectionReason(reason);
 
-    const voiceMsg =
+    const msg =
       lang === "hi"
         ? `आपका केवाईसी अस्वीकृत कर दिया गया है। कारण है: ${reason}`
         : `Your KYC has been rejected. Reason: ${reason}`;
 
-    speak(voiceMsg);
+    speak(msg);
   }
 };
-
 
 
   // language change

@@ -97,7 +97,7 @@ export default function App() {
   const [kycStatus, setKycStatus] = useState("none"); // none | submitted | approved | rejected
   const [kycStep, setKycStep] = useState(1); // 1..4
   const [isInitialized, setIsInitialized] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
+    const [rejectionReason, setRejectionReason] = useState("");
 
 
   // form data

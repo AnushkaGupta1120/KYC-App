@@ -497,9 +497,7 @@ if (savedReason) setRejectionReason(savedReason);
                     <X size={24} />
                   </div>
                   <h3 className="font-bold text-red-800">{t.rejected}</h3>
-<p className="text-red-600 text-sm">
-  {rejectionReason}
-</p>
+                  <p className="text-red-600 text-sm">{t.rejected_msg}</p>
 
                   <button
                     onClick={() => {

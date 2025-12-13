@@ -29,64 +29,41 @@ function useVoice(initialLang = "en", initialEnabled = true) {
   const [lang, setLang] = useState(initialLang);
   const [enabled, setEnabled] = useState(initialEnabled);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
+  
 
-
-  // throttle control
-  const THROTTLE_DELAY = 700; // ms
+  const THROTTLE_DELAY = 700;
   const lastSpeakRef = useRef(0);
 
-  // Cancel active speech
   const cancelSpeech = useCallback(() => {
-    try {
-      if (window?.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-    } catch (err) {
-      console.warn("Speech cancel error:", err);
+    if (window?.speechSynthesis) {
+      window.speechSynthesis.cancel();
     }
   }, []);
 
-  // Main speak function
   const speak = useCallback(
     (text, opts = {}) => {
-      if (!enabled || !text) return;
-      if (!window?.speechSynthesis || typeof window.SpeechSynthesisUtterance === "undefined") return;
+      if (!enabled || !text || !window?.speechSynthesis) return;
 
       const now = Date.now();
       if (now - lastSpeakRef.current < THROTTLE_DELAY) return;
       lastSpeakRef.current = now;
 
-      // Cancel previous speech to avoid overlap
       cancelSpeech();
 
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = lang === "hi" ? "hi-IN" : "en-IN";
       utter.rate = opts.rate ?? 0.95;
-      utter.pitch = opts.pitch ?? 1;
 
       utter.onstart = () => setIsSpeaking(true);
       utter.onend = () => setIsSpeaking(false);
       utter.onerror = () => setIsSpeaking(false);
 
-      try {
-        window.speechSynthesis.speak(utter);
-      } catch (err) {
-        console.error("TTS speak error:", err);
-      }
+      window.speechSynthesis.speak(utter);
     },
     [enabled, lang, cancelSpeech]
   );
 
-  return {
-    lang,
-    setLang,
-    enabled,
-    setEnabled,
-    isSpeaking,
-    speak,
-    cancelSpeech,
-  };
+  return { lang, setLang, enabled, setEnabled, isSpeaking, speak, cancelSpeech };
 }
 
 // ---------- App component ----------
@@ -307,6 +284,16 @@ if (savedReason) setRejectionReason(savedReason);
     else if (kycStep === 3) speak(t.voice_step3);
     else if (kycStep === 4) speak(t.voice_step4);
   }, [currentScreen, kycStep, lang, speak, t]);
+useEffect(() => {
+  if (currentScreen === "dashboard" && kycStatus === "rejected" && rejectionReason) {
+    const msg =
+      lang === "hi"
+        ? `आपका केवाईसी अस्वीकृत कर दिया गया है। कारण है: ${rejectionReason}`
+        : `Your KYC has been rejected. Reason: ${rejectionReason}`;
+
+    speak(msg);
+  }
+}, [currentScreen, kycStatus, rejectionReason, lang, speak]);
 
   // ---------- Render ----------
   // SPLASH

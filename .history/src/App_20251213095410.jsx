@@ -307,6 +307,16 @@ if (savedReason) setRejectionReason(savedReason);
     else if (kycStep === 3) speak(t.voice_step3);
     else if (kycStep === 4) speak(t.voice_step4);
   }, [currentScreen, kycStep, lang, speak, t]);
+useEffect(() => {
+  if (currentScreen === "dashboard" && kycStatus === "rejected" && rejectionReason) {
+    const msg =
+      lang === "hi"
+        ? `आपका केवाईसी अस्वीकृत कर दिया गया है। कारण है: ${rejectionReason}`
+        : `Your KYC has been rejected. Reason: ${rejectionReason}`;
+
+    speak(msg);
+  }
+}, [currentScreen, kycStatus, rejectionReason, lang, speak]);
 
   // ---------- Render ----------
   // SPLASH

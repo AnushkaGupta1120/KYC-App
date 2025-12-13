@@ -29,8 +29,6 @@ function useVoice(initialLang = "en", initialEnabled = true) {
   const [lang, setLang] = useState(initialLang);
   const [enabled, setEnabled] = useState(initialEnabled);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
-
 
   // throttle control
   const THROTTLE_DELAY = 700; // ms
@@ -122,9 +120,6 @@ export default function App() {
     const savedStatus = localStorage.getItem("kyc_status");
     const savedForm = localStorage.getItem("kyc_formData");
     const savedLang = localStorage.getItem("kyc_lang");
-    const savedReason = localStorage.getItem("kyc_rejection_reason");
-if (savedReason) setRejectionReason(savedReason);
-
 
     if (savedStatus) setKycStatus(savedStatus);
     if (savedForm) {
@@ -232,26 +227,11 @@ if (savedReason) setRejectionReason(savedReason);
   };
 
   // admin decision
-  const adminAction = (action, reason = "") => {
-  setKycStatus(action);
-
-  if (action === "approved") {
-    setRejectionReason("");
-    speak(t.voice_dashboard_approved);
-  }
-
-  if (action === "rejected") {
-    setRejectionReason(reason);
-
-    const msg =
-      lang === "hi"
-        ? `आपका केवाईसी अस्वीकृत कर दिया गया है। कारण है: ${reason}`
-        : `Your KYC has been rejected. Reason: ${reason}`;
-
-    speak(msg);
-  }
-};
-
+  const adminAction = (action) => {
+    setKycStatus(action);
+    if (action === "approved") speak(t.voice_dashboard_approved);
+    else speak(t.voice_dashboard_rejected);
+  };
 
   // language change
   const changeLang = (L) => {
@@ -392,14 +372,12 @@ if (savedReason) setRejectionReason(savedReason);
         {/* ADMIN PANEL */}
         {currentScreen === "admin" && (
   <AdminPanel
-  t={t}
-  status={kycStatus}
-  formData={formData}
-  adminAction={adminAction}
-  setCurrentScreen={setCurrentScreen}
-  rejectionReason={rejectionReason}
-/>
-
+    t={t}
+    status={kycStatus}
+    formData={formData}
+    adminAction={adminAction}
+    setCurrentScreen={setCurrentScreen}
+  />
 )}
 
 
@@ -497,9 +475,7 @@ if (savedReason) setRejectionReason(savedReason);
                     <X size={24} />
                   </div>
                   <h3 className="font-bold text-red-800">{t.rejected}</h3>
-<p className="text-red-600 text-sm">
-  {rejectionReason}
-</p>
+                  <p className="text-red-600 text-sm">{t.rejected_msg}</p>
 
                   <button
                     onClick={() => {

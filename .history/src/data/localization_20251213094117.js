@@ -133,8 +133,5 @@ export default {
     back_document: "पीछे का दस्तावेज़",
     selfie_captured: "सेल्फ़ी ली गई",
     selfie_missing: "सेल्फ़ी प्रदान नहीं की गई",
-
-    voice_rejection_reason: "अस्वीकृति का कारण है",
-
   }
 };

@@ -27,11 +27,10 @@ export default function RegisterUser({ setCurrentScreen }) {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     localStorage.setItem("user_otp", otp);
 
-    // ✅ OTP ONLY VIA ALERT
-    alert("Your OTP is: " + otp);
+    console.log("OTP:", otp);
+    alert("OTP sent successfully");
 
-    // ✅ MOVE TO OTP VERIFY SCREEN (MATCHES App.jsx)
-    setCurrentScreen("otp_verify");
+    setCurrentScreen("OTP_VERIFY");
   };
 
   return (

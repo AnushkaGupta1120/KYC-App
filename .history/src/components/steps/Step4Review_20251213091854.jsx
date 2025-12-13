@@ -7,20 +7,17 @@ export default function Step4Review({ formData, t }) {
   // ✅ Robust status detection
   const isFrontUploaded =
     docFront?.status === "uploaded" ||
-    (Array.isArray(docFront?.files) && docFront.files.length > 0);
+    (docFront?.files && docFront.files.length > 0);
 
   const isBackUploaded =
     docBack?.status === "uploaded" ||
-    (Array.isArray(docBack?.files) && docBack.files.length > 0);
+    (docBack?.files && docBack.files.length > 0);
 
   const isSelfieCaptured =
     selfie?.status === "captured" ||
-    Boolean(selfie?.data) ||
-    Boolean(selfie?.preview);
-
-  // ✅ Overall KYC completeness (use this in Submit button)
-  const isKYCComplete =
-    isFrontUploaded && isBackUploaded && isSelfieCaptured;
+    typeof selfie === "string" ||
+    selfie?.preview ||
+    selfie?.data;
 
   const renderStatus = (ok, okText, failText) =>
     ok ? (
@@ -35,6 +32,7 @@ export default function Step4Review({ formData, t }) {
 
   return (
     <div className="space-y-6">
+
       {/* USER DETAILS */}
       <div className="bg-white shadow rounded-xl p-5">
         <h3 className="font-bold text-lg mb-4">
@@ -54,7 +52,7 @@ export default function Step4Review({ formData, t }) {
         <div className="flex justify-between py-2 border-b">
           <span className="text-gray-500">ID Type</span>
           <span className="font-semibold">
-            {idType === "aadhaar" ? "Aadhaar Card" : idType || "—"}
+            {idType === "aadhaar" ? "Aadhaar Card" : idType}
           </span>
         </div>
 
@@ -85,9 +83,6 @@ export default function Step4Review({ formData, t }) {
           {renderStatus(isSelfieCaptured, "Captured", "Missing")}
         </div>
       </div>
-
-      {/* OPTIONAL: You can use this outside */}
-      {/* isKYCComplete === true when all docs are ready */}
     </div>
   );
 }
